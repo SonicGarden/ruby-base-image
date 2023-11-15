@@ -49,7 +49,7 @@ jobs:
           context: .
           platforms: linux/arm64
           push: false
-          build-args:
-            - RUBY_VERSION=${{ matrix.ruby_version }}
+          build-args: |
+            RUBY_VERSION=${{ matrix.ruby_version }}
           tags:
             - $ECR_REGISTRY/$ECR_REPOSITORY:${{ matrix.ruby_version }}
