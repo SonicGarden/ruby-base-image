@@ -9,10 +9,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-
 env:
   AWS_REGION: ap-northeast-1
-  ECR_REPOSITORY: sg-test-202311
+  ECR_REPOSITORY: d5k5i2u3/sg-test-202311
 
 jobs:
   build_and_push:
