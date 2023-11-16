@@ -37,8 +37,8 @@ jobs:
           registry: ${{ env.ECR_REGISTRY }}
           username: ${{ secrets.AWS_ACCESS_KEY_ID }}
           password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          env:
-            AWS_REGION: us-east-1
+        env:
+          AWS_REGION: us-east-1
 
       - name: Build and push
         uses: docker/build-push-action@v5
