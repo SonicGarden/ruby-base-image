@@ -12,7 +12,7 @@ concurrency:
 env:
   ECR_REGISTRY: public.ecr.aws
   ECR_REGISTRY_ALIAS: d5k5i2u3
-  ECR_REPOSITORY: sg-test-202311
+  ECR_REPOSITORY: ruby
 
 jobs:
   build_and_push:
@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        ruby_version: ['3.2.2']
+        ruby_version: ['3.2.2', '3.1.4', '3.0.6']
 
     steps:
       - name: Check out Git repository
@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/arm64
+          platforms: linux/arm64,linux/amd64
           push: true
           no-cache: true
           build-args: |
