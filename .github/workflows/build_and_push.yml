@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ECR_REGISTRY: public.ecr.aws
-  ECR_REPOSITORY: d5k5i2u3/sg-test-202311
+  ECR_REGISTRY: public.ecr.aws/d5k5i2u3
+  ECR_REPOSITORY: sg-test-202311
 
 jobs:
   build_and_push:
