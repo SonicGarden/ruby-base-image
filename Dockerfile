@@ -10,4 +10,4 @@ RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
     apt-get update -qq && \
     apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y ca-certificates build-essential curl git libpq-dev node-gyp pkg-config python-is-python3 gnupg
+    apt-get install --no-install-recommends -y curl supervisor libjemalloc2 gnupg lsb-release vim
