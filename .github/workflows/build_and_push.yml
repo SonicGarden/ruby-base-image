@@ -10,7 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ECR_REGISTRY: public.ecr.aws/d5k5i2u3
+  ECR_REGISTRY: public.ecr.aws
+  ECR_REGISTRY_ALIAS: d5k5i2u3
   ECR_REPOSITORY: sg-test-202311
 
 jobs:
@@ -47,4 +48,4 @@ jobs:
           no-cache: true
           build-args: |
             RUBY_VERSION=${{ matrix.ruby_version }}
-          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ matrix.ruby_version }}
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REGISTRY_ALIAS }}/${{ env.ECR_REPOSITORY }}:${{ matrix.ruby_version }}
