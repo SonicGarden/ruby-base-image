@@ -13,7 +13,7 @@ concurrency:
 
 env:
   ECR_REGISTRY: public.ecr.aws
-  ECR_REGISTRY_ALIAS: d5k5i2u3
+  ECR_REGISTRY_ALIAS: sonicgarden
   ECR_REPOSITORY: ruby
 
 jobs:
