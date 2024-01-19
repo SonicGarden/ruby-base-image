@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        ruby_version: ['3.3.0', '3.2.2', '3.1.4', '3.0.6']
+        ruby_version: ['3.3.0', '3.2.3', '3.1.4', '3.0.6']
 
     steps:
       - name: Check out Git repository
