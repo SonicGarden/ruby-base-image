@@ -2,8 +2,9 @@ ARG RUBY_VERSION=3.2.2
 FROM public.ecr.aws/docker/library/ruby:$RUBY_VERSION-slim
 
 # Update gems and bundler
-RUN gem update --system --no-document && \
-    gem install -N bundler
+RUN gem update --system --no-document
+RUN gem install -N bundler
+    
 
 # Install packages needed to build gems and node modules
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
