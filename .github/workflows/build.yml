@@ -30,8 +30,8 @@ jobs:
           # - '3.1.5'
           # - '3.1.4'
         platform:
-          - { runner: 'linux-arm64-default', image: 'linux/arm64' }
-          - { runner: 'ubuntu-latest', image: 'linux/amd64' }
+          - { runner: 'linux-arm64-public', image: 'linux/arm64' }
+          - { runner: 'ubuntu-24.04', image: 'linux/amd64' }
 
     runs-on: ${{ matrix.platform.runner }}
     steps:
