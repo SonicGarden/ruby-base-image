@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: linux-arm64-default
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       matrix:
