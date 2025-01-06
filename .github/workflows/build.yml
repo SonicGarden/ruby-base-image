@@ -9,7 +9,6 @@ concurrency:
 
 jobs:
   build:
-    runs-on: linux-arm64-default
     timeout-minutes: 30
     strategy:
       matrix:
@@ -30,7 +29,11 @@ jobs:
           # - '3.1.6'
           # - '3.1.5'
           # - '3.1.4'
+        platform:
+          - { runner: 'linux-arm64-default', image: 'linux/arm64' }
+          - { runner: 'ubuntu-latest', image: 'linux/amd64' }
 
+    runs-on: ${{ matrix.platform.runner }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
@@ -45,7 +48,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/arm64
+          platforms: ${{ matrix.platform.image }}
           push: false
           build-args: |
             RUBY_VERSION=${{ matrix.ruby_version }}
