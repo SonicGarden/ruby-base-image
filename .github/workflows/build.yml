@@ -9,7 +9,6 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       matrix:
@@ -30,22 +29,23 @@ jobs:
           - '3.1.6'
           - '3.1.5'
           - '3.1.4'
+        platform:
+          - { runner: 'linux-arm64-public', image: 'linux/arm64' }
+          - { runner: 'ubuntu-24.04', image: 'linux/amd64' }
 
+    runs-on: ${{ matrix.platform.runner }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/arm64,linux/amd64
+          platforms: ${{ matrix.platform.image }}
           push: false
           build-args: |
             RUBY_VERSION=${{ matrix.ruby_version }}
