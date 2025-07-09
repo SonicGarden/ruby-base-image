@@ -10,27 +10,27 @@ concurrency:
 jobs:
   # ruby_version 共通化のためのジョブ
   # 参考: https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow#example-using-an-output-to-define-two-matrices
-  define-matrix:
+  define_matrix:
     runs-on: ubuntu-latest
     outputs:
-      ruby-versions: ${{ steps.ruby-versions.outputs.ruby-versions }}
+      ruby_versions: ${{ steps.ruby_versions.outputs.ruby_versions }}
     steps:
       - uses: actions/checkout@v4
       - name: Define Ruby versions
-        id: ruby-versions
-        run: echo "ruby-versions=$(jq -c < ruby-versions.json)" >> "$GITHUB_OUTPUT" # 1行にする必要があるので "jq -c" を実施
+        id: ruby_versions
+        run: echo "ruby_versions=$(jq -c < ruby_versions.json)" >> "$GITHUB_OUTPUT" # 1行にする必要があるので "jq -c" を実施
         working-directory: .github/workflows/
 
   build:
     timeout-minutes: 30
     needs:
-      - define-matrix
+      - define_matrix
     strategy:
       matrix:
-        ruby_version: ${{ fromJSON(needs.define-matrix.outputs.ruby-versions) }}
+        ruby_version: ${{ fromJSON(needs.define_matrix.outputs.ruby_versions) }}
         platform:
-          - { runner: 'linux-arm64-public', image: 'linux/arm64' }
-          - { runner: 'ubuntu-24.04', image: 'linux/amd64' }
+          - { runner: 'linux-arm64-public', arch: 'arm64' }
+          - { runner: 'ubuntu-24.04', arch: 'amd64' }
 
     runs-on: ${{ matrix.platform.runner }}
     steps:
@@ -42,7 +42,7 @@ jobs:
         uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
         with:
           context: .
-          platforms: ${{ matrix.platform.image }}
+          platforms: linux/${{ matrix.platform.arch }}
           push: false
           build-args: |
             RUBY_VERSION=${{ matrix.ruby_version }}
