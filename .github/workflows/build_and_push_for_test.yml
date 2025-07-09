@@ -1,11 +1,7 @@
 name: Docker build and push
 
 on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: '0 0 * * 0'
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Define Ruby versions
         id: ruby_versions
-        run: echo "ruby_versions=$(cat ruby_versions.json | jq -c)" >> "$GITHUB_OUTPUT" # 1行にする必要があるので "jq -c" を実施
+        run: echo "ruby_versions=$(cat ruby_versions_for_test.json | jq -c)" >> "$GITHUB_OUTPUT" # 1行にする必要があるので "jq -c" を実施
         working-directory: .github/workflows/
 
   build_and_push:
