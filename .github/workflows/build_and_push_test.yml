@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Define Ruby versions
         id: ruby_versions
-        run: echo "ruby_versions=$(jq -c < ruby_versions.json)" >> "$GITHUB_OUTPUT" # 1行にする必要があるので "jq -c" を実施
+        run: echo "ruby_versions=$(jq -c < ruby_versions_test.json)" >> "$GITHUB_OUTPUT" # 1行にする必要があるので "jq -c" を実施
         working-directory: .github/workflows/
 
   build_and_push:
@@ -36,6 +36,9 @@ jobs:
         platform:
           - { runner: 'linux-arm64-public', arch: 'arm64' }
           - { runner: 'ubuntu-24.04', arch: 'amd64' }
+    permissions:
+      id-token: write
+      contents: read
 
     runs-on: ${{ matrix.platform.runner }}
     steps:
@@ -76,6 +79,9 @@ jobs:
     strategy:
       matrix:
         ruby_version: ${{ fromJSON(needs.define_matrix.outputs.ruby_versions) }}
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Configure AWS Credentials
