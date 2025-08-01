@@ -38,7 +38,7 @@ jobs:
           month_ago=`date -d "20 month ago" +%Y-%m-%d`
           images=`aws ecr-public describe-images --region us-east-1 --repository-name ${{ env.ECR_REPOSITORY }} --output json \
             --query "imageDetails[?imagePushedAt<=\\\`${month_ago}\\\`]" \
-            | jq '.[] | select(.imageTags == null or (.imageTags | length == 0))'`
+            | jq 'map(select(.imageTags == null or (.imageTags | length == 0)))'`
           echo "Found no tagged images older than $month_ago:"
           echo $images | jq
           image_digests=`echo $images | jq -r '.[].imageDigest'`
