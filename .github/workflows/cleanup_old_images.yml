@@ -43,7 +43,7 @@ jobs:
           echo $images | jq
           image_digests=`echo $images | jq -r '.[].imageDigest'`
           for image_digest in $image_digests; do
-            echo "[DRY_RUN]Deleting image: $image_digest"
-            # aws ecr-public batch-delete-image --region us-east-1 --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageDigest=$image_digest
-            # sleep 0.2
+            echo "Deleting image: $image_digest"
+            aws ecr-public batch-delete-image --region us-east-1 --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageDigest=$image_digest
+            sleep 0.2
           done
