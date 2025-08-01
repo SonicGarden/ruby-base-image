@@ -15,6 +15,9 @@ jobs:
       id-token: write
       contents: read
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
@@ -37,13 +40,18 @@ jobs:
           # [TEST_MODE] 20 month ago: 2025-08-01 -> 2023-12-01]
           month_ago=`date -d "20 month ago" +%Y-%m-%d`
           images=`aws ecr-public describe-images --region us-east-1 --repository-name ${{ env.ECR_REPOSITORY }} --output json \
-            --query "imageDetails[?imagePushedAt<=\\\`${month_ago}\\\`]" \
+            --query "reverse(sort_by(imageDetails[?imagePushedAt<=\\\`${month_ago}\\\`], &imagePushedAt))[:500]" \
             | jq 'map(select(.imageTags == null or (.imageTags | length == 0)))'`
-          echo "Found no tagged images older than $month_ago:"
-          echo $images | jq
+          if [[ -z "$images" || "$images" == "[]" ]]; then
+            echo "No old images found older than $month_ago."
+            exit 0
+          fi
           image_digests=`echo $images | jq -r '.[].imageDigest'`
+          number_of_images=`echo "$image_digests" | wc -l`
+          echo "$number_of_images images without tags and older than $month_ago were found:"
+          echo $images | jq
           for image_digest in $image_digests; do
-            echo "Deleting image: $image_digest"
-            aws ecr-public batch-delete-image --region us-east-1 --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageDigest=$image_digest
-            sleep 0.2
+            echo "[DRY_RUN]Deleting image: $image_digest"
+            # aws ecr-public batch-delete-image --region us-east-1 --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageDigest=$image_digest
+            # sleep 0.2
           done
