@@ -36,7 +36,7 @@ jobs:
 
       - name: Cleanup old images
         run: |
-          month_ago=`date -d "2 month ago" +%Y-%m-%d`
+          month_ago=`date -d "2 months ago" +%Y-%m-%d`
           images=`aws ecr-public describe-images --region us-east-1 --repository-name ${{ env.ECR_REPOSITORY }} --output json \
             --query "reverse(sort_by(imageDetails[?imagePushedAt<=\\\`${month_ago}\\\`], &imagePushedAt))[:500]" \
             | jq 'map(select(.imageTags == null or (.imageTags | length == 0)))'`
