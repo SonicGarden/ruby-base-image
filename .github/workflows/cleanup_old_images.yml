@@ -49,8 +49,10 @@ jobs:
           number_of_images=`echo "$image_digests" | wc -l`
           echo "$number_of_images images without tags and older than $month_ago were found:"
           echo $images | jq
+          i=1
           for image_digest in $image_digests; do
-            echo "Deleting image: $image_digest"
+            echo "Deleting image($i of $number_of_images): $image_digest"
             aws ecr-public batch-delete-image --region us-east-1 --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageDigest=$image_digest
             sleep 0.2
+            i=$((i + 1))
           done
