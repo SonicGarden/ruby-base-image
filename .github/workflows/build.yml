@@ -31,6 +31,9 @@ jobs:
         platform:
           - { runner: 'linux-arm64-public', arch: 'arm64' }
           - { runner: 'ubuntu-24.04', arch: 'amd64' }
+    permissions:
+      id-token: write
+      contents: read
 
     runs-on: ${{ matrix.platform.runner }}
     steps:
