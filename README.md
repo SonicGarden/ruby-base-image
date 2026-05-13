@@ -4,7 +4,7 @@ https://gallery.ecr.aws/sonicgarden/ruby のソースコードです。
 
 ## Ruby バージョン追加の自動化
 
-[.github/workflows/add_ruby_versions.yml](.github/workflows/add_ruby_versions.yml) が毎日 09:00 JST に Docker Hub の `library/ruby` タグ一覧を確認し、未登録のバージョンを [.github/workflows/ruby_versions.json](.github/workflows/ruby_versions.json) に追加する Pull Request を自動作成します。
+[.github/workflows/add_ruby_versions.yml](.github/workflows/add_ruby_versions.yml) が毎日 09:00 JST に Docker Hub の `library/ruby` タグ一覧を確認し、未登録のバージョンを [ruby_versions.json](ruby_versions.json) に追加する Pull Request を自動作成します。
 
 ### 動作仕様
 

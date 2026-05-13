@@ -28,7 +28,6 @@ jobs:
       - name: Define Ruby versions
         id: ruby_versions
         run: echo "ruby_versions=$(jq -c < ruby_versions.json)" >> "$GITHUB_OUTPUT" # 1行にする必要があるので "jq -c" を実施
-        working-directory: .github/workflows/
 
   build_and_push:
     timeout-minutes: 30

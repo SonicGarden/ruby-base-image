@@ -54,7 +54,6 @@ jobs:
 
       - name: Compute new versions (skip back-fill of gaps) and update ruby_versions.json
         id: diff
-        working-directory: .github/workflows/
         run: |
           set -euo pipefail
 
@@ -139,7 +138,7 @@ jobs:
 
           {
             echo 'body<<__PR_BODY__'
-            echo "Docker Hub の \`library/ruby\` タグ一覧をもとに、未登録の Ruby バージョンを \`.github/workflows/ruby_versions.json\` に追加します。"
+            echo "Docker Hub の \`library/ruby\` タグ一覧をもとに、未登録の Ruby バージョンを \`ruby_versions.json\` に追加します。"
             echo
             echo "## 追加バージョン"
             cat /tmp/pr_body_versions.txt
@@ -174,7 +173,7 @@ jobs:
             ruby-version
             automated
           add-paths: |
-            .github/workflows/ruby_versions.json
+            ruby_versions.json
 
   notify_failure:
     if: failure()
