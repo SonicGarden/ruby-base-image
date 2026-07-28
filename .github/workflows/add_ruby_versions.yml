@@ -181,7 +181,7 @@ jobs:
     needs:
       - add_ruby_versions
     steps:
-      - uses: SonicGarden/world-notify-action@v1
+      - uses: SonicGarden/world-notify-action@v2
         with:
           token: ${{ secrets.WORLD_NOTIFY_APP_TOKEN }}
           groupId: ${{ secrets.WORLD_NOTIFY_APP_GROUP_ID }}
