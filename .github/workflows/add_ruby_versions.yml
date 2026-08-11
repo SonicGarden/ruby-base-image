@@ -28,29 +28,42 @@ jobs:
 
       - name: Fetch all bare-semver tags from Docker Hub library/ruby
         id: fetch
-        env:
-          MAX_PAGES: 50
         run: |
           set -euo pipefail
-          tmp_all="$(mktemp)"
-          url="https://hub.docker.com/v2/repositories/library/ruby/tags/?page_size=100"
-          page=0
-          while [[ -n "${url}" && "${url}" != "null" ]]; do
-            page=$((page + 1))
-            if (( page > MAX_PAGES )); then
-              echo "::error::Exceeded MAX_PAGES=${MAX_PAGES}"
-              exit 1
-            fi
-            echo "Fetching page ${page}: ${url}"
-            resp="$(curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors \
-                      -H 'Accept: application/json' "${url}")"
-            echo "${resp}" | jq -r '.results[].name' >> "${tmp_all}"
-            url="$(echo "${resp}" | jq -r '.next')"
-          done
 
-          grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' "${tmp_all}" \
+          # Registry v2 API は全タグ (現状 1737 件) を 1 レスポンスで返すためページング不要。
+          # 旧実装が使っていた hub.docker.com/v2/repositories/.../tags/ は匿名リクエストだと
+          # offset 1000 (= 11 ページ目) 以降が 403 になり、リトライでは回避できない。
+          #   {"message":"pagination offset too large for anonymous requests; sign in to page further"}
+          token="$(curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors \
+                     'https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/ruby:pull' \
+                   | jq -r '.token')"
+
+          if [[ -z "${token}" || "${token}" == "null" ]]; then
+            echo "::error::Failed to obtain Docker registry token"
+            exit 1
+          fi
+
+          resp="$(curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors \
+                    -H "Authorization: Bearer ${token}" \
+                    -H 'Accept: application/json' \
+                    'https://registry.hub.docker.com/v2/library/ruby/tags/list')"
+
+          # 並び順は問わない (後続の Python 側で semver として並べ直す) ので dedup のみ。
+          echo "${resp}" | jq -r '.tags[]' \
+            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
             | sort -u > upstream_versions.txt
-          echo "Found $(wc -l < upstream_versions.txt) bare-semver Ruby tags upstream"
+
+          count="$(wc -l < upstream_versions.txt)"
+          echo "Found ${count} bare-semver Ruby tags upstream"
+
+          # 差分ロジックは「上流に無いものは追加しない」方向にしか働かないため、
+          # 取得が失敗して空・極少になっても PR が作られず「新バージョンなし」と誤認される。
+          # 上流障害を静かに見逃さないよう明示的に落とす (正常時は 130 件前後)。
+          if (( count < 50 )); then
+            echo "::error::Suspiciously few tags (${count}); aborting to avoid a bogus diff"
+            exit 1
+          fi
 
       - name: Compute new versions (skip back-fill of gaps) and update ruby_versions.json
         id: diff
@@ -144,7 +157,7 @@ jobs:
             cat /tmp/pr_body_versions.txt
             echo
             echo "## 参照元"
-            echo "- Docker Hub Tags API: https://hub.docker.com/v2/repositories/library/ruby/tags/?page_size=100"
+            echo "- Docker Registry Tags API: https://registry.hub.docker.com/v2/library/ruby/tags/list"
             echo "- Docker Hub UI: https://hub.docker.com/_/ruby/tags"
             echo
             echo "## 抽出ロジック"
