@@ -1,4 +1,4 @@
-ARG RUBY_VERSION=3.2.2
+ARG RUBY_VERSION=must-be-specified
 FROM public.ecr.aws/docker/library/ruby:$RUBY_VERSION-slim
 
 # Update gems and bundler
