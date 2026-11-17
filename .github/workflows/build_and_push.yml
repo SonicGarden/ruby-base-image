@@ -156,10 +156,9 @@ jobs:
       - build_and_push
       - create_manifest
     steps:
-      - uses: SonicGarden/world-notify-action@faa8ac028ed166f930564c623cfef5e06a7cc91d # v2.0.0
+      - uses: SonicGarden/world-notify-action@8ff7cecf3c2cd0823b7ce3a226c52123c59a87f6 # v2.1.0
         with:
-          token: ${{ secrets.WORLD_NOTIFY_APP_TOKEN }}
-          groupId: ${{ secrets.WORLD_NOTIFY_APP_GROUP_ID }}
+          groupToken: ${{ secrets.WORLD_GROUP_TOKEN }}
           content: |
             ${{ github.event.repository.name }} の ${{ github.workflow }} でエラーが発生しました 😱
 
